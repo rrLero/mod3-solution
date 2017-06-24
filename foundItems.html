@@ -1,0 +1,24 @@
+<div ng-show="items" id="borderTable" class="container">
+<table class="table table-hover table-bordered table-striped">
+  <thead>
+    <tr>
+      <th class="col-xs-1">#</th>
+      <th class="col-xs-2">ShortName </th>
+      <th class="col-xs-2">name</th>
+      <th class="col-xs-5">Description</th>
+      <th class="col-xs-2">Button</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="item in items">
+      <th>{{$index + 1}}</th>
+      <th>{{item.short_name}}</th>
+      <th>{{item.name}}</th>
+      <th>{{item.description}}</th>
+      <th>
+        <button ng-click="onRemove({index: $index});">Don't want this one</button>
+      </th>
+    </tr>
+  </tbody>
+</table>
+</div>
