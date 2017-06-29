@@ -1,4 +1,4 @@
-<div ng-show="items" id="borderTable" class="container">
+<div ng-show="list.items" id="borderTable" class="container">
 <table class="table table-hover table-bordered table-striped">
   <thead>
     <tr>
@@ -10,15 +10,19 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat="item in items">
+    <tr ng-repeat="item in list.items">
       <th>{{$index + 1}}</th>
       <th>{{item.short_name}}</th>
       <th>{{item.name}}</th>
       <th>{{item.description}}</th>
       <th>
-        <button ng-click="onRemove({index: $index});">Don't want this one</button>
+        <button ng-click="list.onRemove({index: $index});">Don't want this one</button>
       </th>
     </tr>
   </tbody>
 </table>
 </div>
+<br>
+<br>
+<br>
+<p class="error">Nothing Found!</p>

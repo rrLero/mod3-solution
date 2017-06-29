@@ -13,7 +13,11 @@ function FoundItems() {
     scope: {
       items: '<',
       onRemove: '&'
-    }
+    },
+    controller: MenuSearchDirectiveController,
+    controllerAs: 'list',
+    bindToController: true,
+    link: NarrowItDownDirectiveLink
   }
   return ddo;
 
@@ -21,26 +25,24 @@ function FoundItems() {
 
 NarrowItDownController.$inject = ['MenuSearchService'];
 function NarrowItDownController(MenuSearchService) {
-  var controller = this;
-  controller.searchTerm = "";
-  controller.getSortedList = function () {
-    controller.found = ''
-    if (controller.searchTerm) {
-      var promise = MenuSearchService.getMatchedMenuItems(controller.searchTerm.toLowerCase());
+  var syntax = this;
+  syntax.searchTerm = "";
+  syntax.getSortedList = function () {
+    syntax.found = ''
+    if (syntax.searchTerm) {
+      var promise = MenuSearchService.getMatchedMenuItems(syntax.searchTerm.toLowerCase());
       promise.then(function (result) {
-      controller.found = result;
-      console.log(controller.found);
-      if (!controller.found.length) {
-        controller.searchTerm = "Nothing Found";
-        controller.found = '';
+      syntax.found = result;
+      if (!syntax.found.length) {
+        syntax.found = '';
       }
     })
   } else {
-    controller.searchTerm = "Nothing Found";
+    // syntax.searchTerm = "Nothing Found";
   }
   }
-  controller.removeItem = function (itemIndex) {
-    controller.found.splice(itemIndex, 1);
+  syntax.removeItem = function (itemIndex) {
+    syntax.found.splice(itemIndex, 1);
   }
 }
 
@@ -55,14 +57,59 @@ function MenuSearchService($http, ApiBasePath) {
       .then(function (result) {
       // process result and only keep items that match
       var foundItems = [];
-      for (var i=0; i<result.data.menu_items.length; i++) {
-        if(result.data.menu_items[i].description.indexOf(searchTerm) != -1) {
-          foundItems.push(result.data.menu_items[i])
-        }
-      }      // return processed items
+      foundItems = result.data.menu_items.filter(function (el) {
+        return el.description.indexOf(searchTerm)!=-1
+      })
+           // return processed items
       return foundItems;
     });
     }
 }
+
+function NarrowItDownDirectiveLink(scope, element, attrs, controller) {
+
+
+  scope.$watch('list.isEmptyList()', function (newValue, oldValue) {
+    console.log("Old value: ", oldValue);
+    console.log("New value: ", newValue);
+
+    if (newValue === true) {
+      displayCookieWarning();
+    }
+    else {
+      removeCookieWarning();
+    }
+
+  });
+
+  function displayCookieWarning() {
+    // Using Angluar jqLite
+    var warningElem = element.find("p");
+    console.log(warningElem);
+    warningElem.css('display', 'block');
+
+  }
+
+
+  function removeCookieWarning() {
+    // Using Angluar jqLite
+    var warningElem = element.find("p");
+    warningElem.css('display', 'none');
+
+  }
+}
+
+function MenuSearchDirectiveController() {
+  var list = this;
+
+  list.isEmptyList = function () {
+
+      if (list.items) {
+        return false;
+      }
+    return true;
+  };
+}
+
 
 })()
